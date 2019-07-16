@@ -40,13 +40,12 @@ CI脚本 cdvci.sh
 chmod +x cdvci.sh
 #查看脚本用法
 ./cdvci.sh -h
-# 可选：手动修改config.xml中app显示名称
-app_name=智慧工厂数据中心
-sed -i ".bk" "s/<name>[^<]*<\/name>/<name>$app_name<\/name>/" /Users/wangweili/ionic1/config.xml
 #构建svn app command [OPTIONS].
 ./cdvci.sh mes prepare -p ios -v 0.1.3
-#真机调试  usb连接iphone，且解锁
-./cdvci.sh mes run -p ios
+#真机调试  前提：
+# usb连接iphone，iphone信任设备，且解锁
+# android开启USB调试
+./cdvci.sh mes run -p ios -n 智慧工厂数据中心
 #假如命令(如真机调试)后，未正常restore（没有echo "restore successfully"）,则需马上手动restore执行以下命令
 ./cdvci.sh mes clean -p ios
 #导出并上传企业版
@@ -54,7 +53,7 @@ sed -i ".bk" "s/<name>[^<]*<\/name>/<name>$app_name<\/name>/" /Users/wangweili/i
 export http_proxy=http://10.9.26.13:8080 && \
 export https_proxy=http://10.9.26.13:8080 && \
 export no_proxy=10.0.0.0/24,loalhost,127.0.0.1,*.byd.com,*.byd.com.cn
-./cdvci.sh mes upload -p android -v 1.2.9 -m "update something"
+./cdvci.sh mes upload -p android -v 1.2.9 -n 智慧工厂数据中心 -m "update something"
 #仅上传应用图标
 ./cdvci.sh mes uploadIcon -p ios
 ```

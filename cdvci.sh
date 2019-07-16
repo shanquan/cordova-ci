@@ -33,6 +33,9 @@ getArgs(){
         elif [[ $var = "-b" || $var = "--build" ]]
         then
             build=${arr[$i]}
+        elif [[ $var = "-n" || $var = "--name" ]]
+        then
+            app_name=${arr[$i]}
         elif [[ $var = "-m" || $var = "--message" ]]
         then
             message=${arr[$i]}
@@ -61,9 +64,14 @@ prepare()
     sed -i ".bk" "s/id[ ]*=[ ]*['|\"][^\"]*['|\"]/id=\"$CORP.$app\"/" config.xml
     if [[ $platform = "ios" ]]
     then
-        # read app_name in config.xml
-        app_name=`grep -o "<name>[^<]*</name>" config.xml | grep -o '>.*<'`
-        app_name=${app_name:1:`expr ${#app_name} - 2`}
+        if [ -n app_name ]
+        then
+            sed -i ".bk" "s/<name>[^<]*<\/name>/<name>$app_name<\/name>/" "$PROJECT_PATH/config.xml"
+        else
+            # read app_name in config.xml
+            app_name=`grep -o "<name>[^<]*</name>" config.xml | grep -o '>.*<'`
+            app_name=${app_name:1:`expr ${#app_name} - 2`}
+        fi
         # set name to $INITIAL in ios project, because ios project don't support name change in config.xml
         sed -i ".bk" "s/$app_name/$INITIAL/" config.xml
         # set app_name to info.plist, change app name in real
@@ -202,6 +210,7 @@ then
     echo "  -p, --platform <platform>       required, platform value: ios, android"
     echo "  -v, --version <version>         version format: a.b.c, default: 0.0.1"
     echo "  -b, --build <build>             build number for upload command, default: version value"
+    echo "  -n, --name <name>               app display name"
     echo "  -m, --message <changelog>       upload changelog, only for upload command, should be without spaces"
     echo "  -h, --help                      see usage"
 else
