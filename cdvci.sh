@@ -87,7 +87,7 @@ prepare()
     sed -i ".bk" "s/id[ ]*=[ ]*['|\"][^\"]*['|\"]/id=\"$CORP.$app\"/" config.xml
     if [[ $platform = "ios" ]]
     then
-        if [ -n $app_name ]
+        if [ -n "$app_name" ]
         then
             sed -i ".bk" "s/<name>[^<]*<\/name>/<name>$app_name<\/name>/" "$PROJECT_PATH/config.xml"
         else
@@ -137,7 +137,7 @@ upload(){
      -H "Content-Type: application/json" \
      -d "{\"type\":\"$platform\", \"bundle_id\":\"$CORP.$app\", \"api_token\":\"$TOKEN\"}"`
 
-    if [[ -n $1 && ${1} = "icon" ]]
+    if [[ -n "$1" && ${1} = "icon" ]]
     then
         key=`node -pe "JSON.stringify(JSON.parse(process.argv[1]).cert.icon.key)" "$response"`
         token=`node -pe "JSON.stringify(JSON.parse(process.argv[1]).cert.icon.token)" "$response"`
@@ -180,7 +180,7 @@ upload(){
     fi
 }
 
-if [[ -n $app && $app != "--help" && $app != "-h" ]]
+if [[ -n "$app" && $app != "--help" && $app != "-h" ]]
 then
     # $./cdvci.sh cnc prepare -v 1.abe -b 23 -m 'etveg te ll'，执行时以下方式无法处理参数含空格问题
     # arr=($@)
