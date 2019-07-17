@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 
-# cordova project path
-PROJECT_PATH="/Users/wangweili/ionic1"
-# svn base path, and the directory should be $SVN_PATH/$app/www
-SVN_PATH="/Users/wangweili/Android"
+# cordova project path, also as script's absolute path
+PROJECT_PATH=$(cd "$(dirname "$0")";pwd)
+# svn base path, and the directory should be $SOURCE_PATH/$app/www
+if [ -z ${SOURCE_PATH} ];then
+SOURCE_PATH="/Users/wangweili/Android"
+fi
 # corporate in app's bundle id
+if [ -z ${CORP} ];then
 CORP="com.byd"
+fi
 # `cordova create project` and first run `cordova platform add ios`，the <name> in config.xml for ios can't change. so we save it here
+if [ -z ${INITIAL} ];then
 INITIAL="cnc"
+fi
 # fir.im api token
+if [ -z ${TOKEN} ];then
 TOKEN="0df4b94d3492c6d71836f91b49c918a1"
+fi
 # project name
 app=${1}
 
@@ -49,12 +57,27 @@ getArgs(){
         echo "platform invalid, platform could only be android or ios"
         exit
     fi
+    if [[ ! -e "$SOURCE_PATH/$app/www" ]];then
+        echo "source path: $SOURCE_PATH/$app/www doesn't exist!"
+        exit
+    fi
 }
 
 prepare()
 {
-    cd "$SVN_PATH/$app/www"
-    svn up
+    cd "$SOURCE_PATH/$app/www"
+    {
+        #try
+        svn up
+    } || {
+        # catch
+        {
+            git pull
+        } || {
+            echo "$SOURCE_PATH/$app/www CVS code update failed!"
+            exit
+        }
+    }
     if [[ $app = "mes" ]]
     then
         mv .svn ../
@@ -64,7 +87,7 @@ prepare()
     sed -i ".bk" "s/id[ ]*=[ ]*['|\"][^\"]*['|\"]/id=\"$CORP.$app\"/" config.xml
     if [[ $platform = "ios" ]]
     then
-        if [ -n app_name ]
+        if [ -n $app_name ]
         then
             sed -i ".bk" "s/<name>[^<]*<\/name>/<name>$app_name<\/name>/" "$PROJECT_PATH/config.xml"
         else
@@ -88,7 +111,7 @@ prepare()
     fi
     #添加www链接
     rm -rf www
-    ln -s "$SVN_PATH/$app/www" www
+    ln -s "$SOURCE_PATH/$app/www" www
 }
 
 restore(){
@@ -101,7 +124,7 @@ restore(){
     fi
     if [[ $app = "mes" ]]
     then
-        cd "$SVN_PATH/mes"
+        cd "$SOURCE_PATH/mes"
         mv .svn www/
         cd $PROJECT_PATH
     fi
@@ -157,7 +180,7 @@ upload(){
     fi
 }
 
-if [[ $app = "mes" || $app = "cnc" ]]
+if [[ -n $app && $app != "--help" && $app != "-h" ]]
 then
     # $./cdvci.sh cnc prepare -v 1.abe -b 23 -m 'etveg te ll'，执行时以下方式无法处理参数含空格问题
     # arr=($@)
@@ -196,11 +219,10 @@ then
     else
         echo "invalid operation"
     fi
-elif [[ $app = "" || $app = "--help" || $app = "-h" ]]
-then
+else
     echo "cdvci.sh Usage: "
     echo "./cdvci.sh app command [OPTIONS]..."
-    echo "  app could be mes or cnc,or maybe in future other svn projects under Android"
+    echo "  app should be the last name of bundle id, and also the name of a child directory with a www source directory in \$SOURCE_PATH"
     echo "  command could only be as follows:"
     echo "      prepare                     will run cordova prepare platform"
     echo "      run                         will run cordova run platform --device"
@@ -213,6 +235,4 @@ then
     echo "  -n, --name <name>               app display name"
     echo "  -m, --message <changelog>       upload changelog, only for upload command, should be without spaces"
     echo "  -h, --help                      see usage"
-else
-    echo "invalid app:$app, for now app should be mes or cnc"
 fi

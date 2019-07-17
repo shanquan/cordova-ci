@@ -1,5 +1,26 @@
 # 本项目为通用android/ios编译模板
 
+# 前提条件
+
+操作系统： MAC OS X
+安装程序：nodejs,xcode,android studio
+```bash
+npm -i -g cordova ios-sim ios-deploy
+# appname:cnc为$INITIAL变量值
+cordova create cnc
+cordova platform add android
+cordova platform add ios
+```
+变量$INITIAL、$TOKEN配置正确，源码路径配置后的路径为：$SOURCE_PATH/$app/www
+源码路径下可以通过`svn up`或`git pull`命令更新；
+ios 编译发布还需要先配置好apple id,开发者证书,mobile profile，可以通过先用xcode打开并编译项目进行验证；
+
+## 其他操作系统说明
+如果是linux系统并安装好JDK和Android SDK后，仅支持编译和上传android APP；
+此脚本不支持windows系统，可转换为相应的powershell脚本或通过linux子系统运行支持android App；
+其他操作系统可通过vagrant安装[vagrant osx box](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=osx)配置虚拟机IOS开发环境；
+或者不用此脚本，通过github和Travis CI进行持续集成（支持android和ios），[参考pgyer持续集成文档](https://www.pgyer.com/doc/view/travis_ios).
+
 # IOS platform添加后不能修改config.xml中的name，但是可以修改id
 IOS发布后如需修改显示名称，直接在XCODE打开，并选择TARGETS->General，修改Display Name即可；
 bundleID改变后有时会因为缓存发布报错，按以下步骤修改bundleID可解决：
