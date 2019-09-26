@@ -48,8 +48,6 @@ getArgs(){
             if [[ -n "${arr[$i]}" && `expr ${arr[$i]} : '^[0-9]*\.[0-9]*'` -ge 3 ]]
             then
                 version=${arr[$i]}
-                # set version in config
-                sed -i ".bk" "s/version[ ]*=[ ]*[\"][^\"]*[\"]/version=\"$version\"/" "$PROJECT_PATH/config.xml"
             fi
         elif [[ $var = "-b" || $var = "--build" ]]
         then
@@ -96,6 +94,11 @@ prepare()
         mv .svn ../
     fi
     cd $PROJECT_PATH
+    if [ -n $version ]
+    then
+        # set version in config
+        sed -i ".bk" "s/version[ ]*=[ ]*[\"][^\"]*[\"]/version=\"$version\"/" config.xml
+    fi
     # set bundle id in config.xml
     sed -i ".bk" "s/id[ ]*=[ ]*['|\"][^\"]*['|\"]/id=\"$app_id\"/" config.xml
     if [[ $platform = "ios" ]]
