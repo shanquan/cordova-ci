@@ -6,10 +6,6 @@ PROJECT_PATH=$(cd "$(dirname "$0")";pwd)
 if [ -z ${SOURCE_PATH} ];then
 SOURCE_PATH="/Users/wangweili/Android"
 fi
-# corporate in app's bundle id
-if [ -z ${CORP} ];then
-CORP="com.byd"
-fi
 # `cordova create project` and first run `cordova platform add ios`，the <name> in config.xml for ios can't change. so we save it here
 if [ -z ${INITIAL} ];then
 INITIAL="cnc"
@@ -23,6 +19,27 @@ app=${1}
 
 # parse arguments
 getArgs(){
+    # args is prior to $SOURCE_PATH/$app/config.xml, $SOURCE_PATH/$app/config.xml is prior to $PROJECT_PATH/config.xml
+    if [[ -f $SOURCE_PATH/$app/config.xml ]];then
+        # read version in config.xml
+        version=`grep -o "<widget.*>" "$SOURCE_PATH/$app/config.xml" | grep -o "version[ ]*=[ ]*[\"][^\"]*[\"]" | grep -o \".*\"`
+        version=${version:1:`expr ${#version} - 2`}
+        # read app_id in config.xml
+        app_id=`grep -o "id[ ]*=[ ]*['|\"][^\"]*['|\"]" "$SOURCE_PATH/$app/config.xml" | grep -o \".*\"`
+        app_id=${app_id:1:`expr ${#app_id} - 2`}
+        # read app_name in config.xml
+        app_name=`grep -o "<name>[^<]*</name>" "$SOURCE_PATH/$app/config.xml" | grep -o '>.*<'`
+        app_name=${app_name:1:`expr ${#app_name} - 2`}
+    else
+        app_id=`grep -o "id[ ]*=[ ]*['|\"][^\"]*['|\"]" "$PROJECT_PATH/config.xml" | grep -o \".*\"`
+        app_id=${app_id:1:`expr ${#app_id} - 2`}
+    fi
+    # app_id is required
+    if [ -z $app_id ]
+    then
+        echo "pls set app_id in config.xml"
+        exit
+    fi
     i=0
     for var in "$@"; do
         let "i++"
@@ -33,10 +50,6 @@ getArgs(){
                 version=${arr[$i]}
                 # set version in config
                 sed -i ".bk" "s/version[ ]*=[ ]*[\"][^\"]*[\"]/version=\"$version\"/" "$PROJECT_PATH/config.xml"
-            else
-                # read version in config.xml
-                version=`grep -o "version[ ]*=[ ]*[\"][^\"]*[\"]" config.xml | grep -o \".*\"`
-                version=${version:1:`expr ${#version} - 2`}
             fi
         elif [[ $var = "-b" || $var = "--build" ]]
         then
@@ -84,30 +97,25 @@ prepare()
     fi
     cd $PROJECT_PATH
     # set bundle id in config.xml
-    sed -i ".bk" "s/id[ ]*=[ ]*['|\"][^\"]*['|\"]/id=\"$CORP.$app\"/" config.xml
+    sed -i ".bk" "s/id[ ]*=[ ]*['|\"][^\"]*['|\"]/id=\"$app_id\"/" config.xml
     if [[ $platform = "ios" ]]
     then
-        if [ -n "$app_name" ]
-        then
-            sed -i ".bk" "s/<name>[^<]*<\/name>/<name>$app_name<\/name>/" "$PROJECT_PATH/config.xml"
-        else
-            # read app_name in config.xml
-            app_name=`grep -o "<name>[^<]*</name>" config.xml | grep -o '>.*<'`
-            app_name=${app_name:1:`expr ${#app_name} - 2`}
-        fi
         # set name to $INITIAL in ios project, because ios project don't support name change in config.xml
-        sed -i ".bk" "s/$app_name/$INITIAL/" config.xml
-        # set app_name to info.plist, change app name in real
-        ## grep搜索显示行号和行内容： grep -n CFBundleDisplayName "platforms/ios/$INITIAL/$INITIAL-info.plist"
-        line=`sed -n '/CFBundleDisplayName/=' "platforms/ios/$INITIAL/$INITIAL-info.plist"`
-        line=`expr $line + 1`
-        ## 换行问题，info.plist文件中拷贝换行符在</string>后粘贴才解决
-        sed -i ".bk" "${line}c \ 
-            <string>$app_name</string>
-            " "platforms/ios/$INITIAL/$INITIAL-info.plist"
-        echo "set app name: $app_name"
+        sed -i ".bk" "s/<name>[^<]*<\/name>/<name>$INITIAL<\/name>/" config.xml
+        if [ -n $app_name ]
+        then
+            # set app_name to info.plist, change app name in real
+            ## grep搜索显示行号和行内容： grep -n CFBundleDisplayName "platforms/ios/$INITIAL/$INITIAL-info.plist"
+            line=`sed -n '/CFBundleDisplayName/=' "platforms/ios/$INITIAL/$INITIAL-info.plist"`
+            line=`expr $line + 1`
+            ## 换行问题，info.plist文件中拷贝换行符在</string>后粘贴才解决
+            sed -i ".bk" "${line}c \ 
+                <string>$app_name</string>
+                " "platforms/ios/$INITIAL/$INITIAL-info.plist"
+            echo "set app name: $app_name"
+        fi
         # fix PRODUCT_BUNDLE_IDENTIFIER in project.pbxproj to avoid Export,Archive Error with Profiles
-        sed -i ".bk" "s/PRODUCT_BUNDLE_IDENTIFIER[ ]*=.*;/PRODUCT_BUNDLE_IDENTIFIER = $CORP.$app;/g" "platforms/ios/$INITIAL.xcodeproj/project.pbxproj"
+        sed -i ".bk" "s/PRODUCT_BUNDLE_IDENTIFIER[ ]*=.*;/PRODUCT_BUNDLE_IDENTIFIER = $app_id;/g" "platforms/ios/$INITIAL.xcodeproj/project.pbxproj"
     fi
     #添加www链接
     rm -rf www
@@ -135,7 +143,7 @@ upload(){
     echo "upload $platform ${1} to fir.im"
     response=`curl -X "POST" "http://api.fir.im/apps" \
      -H "Content-Type: application/json" \
-     -d "{\"type\":\"$platform\", \"bundle_id\":\"$CORP.$app\", \"api_token\":\"$TOKEN\"}"`
+     -d "{\"type\":\"$platform\", \"bundle_id\":\"$app_id\", \"api_token\":\"$TOKEN\"}"`
 
     if [[ -n "$1" && ${1} = "icon" ]]
     then
