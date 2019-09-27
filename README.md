@@ -1,5 +1,7 @@
 # 本项目为通用android/ios编译模板,适合生产环境下自动发布
 
+开发环境（仅Android 5.1.1）请切换android-dev分支
+
 # 前提条件
 
 操作系统： MAC OS X
