@@ -1,189 +1,62 @@
-# 本项目为通用android/ios编译模板,适合生产环境下自动发布
+## 项目适用须知
 
-# 前提条件
+本项目适合Android/IOS手机平板通用型项目，适合开发环境下调试和真机测试；
+本地插件在ionic项目基础插件上仅添加APP版本查询，Android安装包下载升级（默认不包含，可选）功能。对比其他ionic项目如下：
+1. mes项目不支持包名修改，支持插件功能：本地版本、自动升级插件、截图、系统分享；
+2. TVtemplates项目，支持插件功能：本地版本、自动升级插件、外，默认横屏显示和遥控器操作，适合电视看板项目；
+3. cardReader项目，在TVTemplates项目基础上还支持插件功能：获取IP地址、获取MAC地址、音频播放、网络状态检测、禁用键盘输入、简单http服务，属于电视看板应用
+4. productionLineBoard项目，在TVTemplates项目基础上还支持插件：获取IP地址、获取MAC地址、网络状态检测、网速检测、禁用键盘输入、三色灯连接控制，属于电视看板应用
+5. 默认仅支持APP版本插件，升级功能建议通过浏览器下载更新，参考cnc项目的appUpdate服务；使用-u参数编译时可以添加支持Android应用内安装包下载更新。
 
-操作系统： MAC OS X
-安装程序：nodejs,xcode,android studio
+## 使用
+
+`cdvci.sh`脚本为Android开发环境下在V1项目中辅助调试和开发过程，建议开发流程如下：
 ```bash
-npm -i -g cordova ios-sim ios-deploy
-# appname:cnc为$INITIAL变量值
-cordova create cnc
-cordova platform add android
-cordova platform add ios
+# $app为待开发项目文件名
+cd D:/wwl/Develop/Android/$app
+svn up
+#注意www重名问题
+cp www D:/wwl/Develop/ionic/v1/www
+#浏览器开发调试并修改OK
+ionic serve
+#修改D:/wwl/Develop/Android/$app下的config.xml文件版本信息，然后执行`./cdvci.sh`脚本进行真机调试和生成安装包
 ```
-变量$INITIAL、$TOKEN配置正确，源码路径配置后的路径为：$SOURCE_PATH/$app/www
-源码路径下可以通过`svn up`或`git pull`命令更新；
-ios 编译发布还需要先配置好apple id,开发者证书,mobile profile，可以通过先用xcode打开并编译项目进行验证；
+可通过执行`bash cdvci.sh`脚本实现以下功能： 
+1. 查看帮助：`./cdvci.sh -h`
+2. 真机运行安装cnc项目：`./cdvci.sh cnc run`
+3. 浏览器升级下编译cnc项目调试包：`./cdvci.sh cnc build -b`
+4. 浏览器升级下签发cnc项目发布包：`./cdvci.sh cnc build -b -r`
+5. Android应用内升级功能下编译rwDataCol项目：`./cdvci.sh rwDataCol build -u`
 
-## 其他操作系统说明
-如果是linux系统并安装好JDK和Android SDK后，仅支持编译和上传android APP；
-此脚本不支持windows系统，可转换为相应的powershell脚本或通过linux子系统运行支持android App；
-其他操作系统可通过vagrant安装[vagrant osx box](https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=osx)配置虚拟机IOS开发环境；
-或者不用此脚本，通过github和Travis CI进行持续集成（支持android和ios），[参考pgyer持续集成文档](https://www.pgyer.com/doc/view/travis_ios).
+*todo: 写个POWERSHELL版脚本：`.\cdvci.ps1`*
 
-# IOS platform添加后不能修改config.xml中的name，但是可以修改id
-IOS发布后如需修改显示名称，直接在XCODE打开，并选择TARGETS->General，修改Display Name即可；
-bundleID改变后有时会因为缓存发布报错，按以下步骤修改bundleID可解决：
-1. 在XCODE打开，并选择TARGETS->General，修改Bundle Identifier
-2. 选择TARGETS->Info，确认是否需要修改Bundle identifier
-3. 选择TARGETS->Build Settings->Packaging，确认是否需要修改Product Bundle Identifier
-4. 选择TARGETS->General->Signing，点击Provisioning Profile确认Bundle ID
-
-# cordova ios Info 变量
-Bundle name: ${PRODUCT_NAME}
-Bundle identifier: $(PRODUCT_BUNDLE_IDENTIFIER) 
-Executable file: ${PRODUCT_NAME}
-
-# 编译打包命令
-配置[build.json](./build.json)
-
-打包命令
+在Android发布，反复迭代开发并测试成功后，如需继续生成IOS版本，可参考以下开发流程：
 ```bash
-#此项目直接执行cordova命令前，需确认www文件夹存在，以及config.xml中的name值为cnc初始值不能修改
-#真机调试
-cordova run ios --device
-#手动安装ipa
-cordova build ios --device
-cd ~/ionic1/platforms/ios/build/device
-ios-deploy --debug --bundle cnc.ipa
-#模拟器调试
-cordova run ios --emulator
-#导出企业版
-cordova build ios --release --device
-#修改config.xml中的id并重新编译，遇到找不到profile问题，需修改platforms/ios/cnc.xcodeproj/project.pbxproj文件中的Product Bundle Identifier
-sed -i ".bk" "s/com.byd.cnc/com.byd.mes/" platforms/ios/cnc.xcodeproj/project.pbxproj
-```
-
-CI脚本 cdvci.sh
-
-```bash
-#脚本添加执行权限
-chmod +x cdvci.sh
-#查看脚本用法
-./cdvci.sh -h
-#构建svn app command [OPTIONS].
-./cdvci.sh mes prepare -p ios -v 0.1.3
-#真机调试  前提：
-# usb连接iphone，iphone信任设备，且解锁
-# android开启USB调试
-./cdvci.sh mes run -p ios -n 智慧工厂数据中心
-#假如命令(如真机调试)后，未正常restore（没有echo "restore successfully"）,则需马上手动restore执行以下命令
-./cdvci.sh mes clean -p ios
-#导出并上传企业版
-#set proxy
-export http_proxy=http://10.9.26.13:8080 && \
-export https_proxy=http://10.9.26.13:8080 && \
-export no_proxy=10.0.0.0/24,loalhost,127.0.0.1,*.byd.com,*.byd.com.cn
+#开发环境提交svn
+cd D:/wwl/Develop/Android/$app
+svn ci -m 'message:xxx'
+#切换IOS开发环境，直接进行IOS真机调试及适配工作，进入/home/ionic/v1项目下调用Android/IOS开发脚本./cdvci.sh，示例：
+./cdvci.sh rwDataCol prepare -p ios -v 0.1.3 -n 智慧工厂数据中心
+#在IOS真机调试OK之后，可以执行导出上传企业版本至fir.im
 ./cdvci.sh mes upload -p android -v 1.2.9 -n 智慧工厂数据中心 -m "update something"
-#仅上传应用图标
-./cdvci.sh mes uploadIcon -p ios
 ```
 
-# ios-deploy
-安装：`npm i -g ios-deploy`
-使用：`ios-deploy`查看使用说明，功能类似于android的adb
-
-# fir.im upload log
-<http://fir.im/docs/publish>
-
-get upload tokens request sample
+## 安装插件失败后修复
 ```bash
-curl -X "POST" "http://api.fir.im/apps" \
-     -H "Content-Type: application/json" \
-     -d "{\"type\":\"ios\", \"bundle_id\":\"com.byd.cnc\", \"api_token\":\"0df4b94d3492c6d71836f91b49c918a1\"}"
-```
-response sample
-```json
-{
-    "id": "5b165289ca87a8535507fff4",
-    "type": "ios",
-    "short": "fyqa",
-    "app_user_id": "57a40a34959d692e740000ec",
-    "storage": "qiniu",
-    "form_method": "POST",
-    "cert": {
-        "icon": {
-            "key": "6ea4b130767d97e8c2827241e0a22a2532886ccf",
-            "token": "LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:X_qz8egXbRWjwJrKzNYuXi6k9JQ=:eyJzY29wZSI6ImZpcmljb246NmVhNGIxMzA3NjdkOTdlOGMyODI3MjQxZTBhMjJhMjUzMjg4NmNjZiIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWIxNjUyODljYTg3YTg1MzU1MDdmZmY0XHUwMDI2dGltZXN0YW1wPTE1NjI5MTE4MThcdTAwMjZzaWduPTcxYWI2XHUwMDI2b3JpZ2luYWxfa2V5PWQ1NWQ5ZTc0YjBlYzQ2OGZlM2ZiYTA3NjIyOGEyZTI1N2IzYmVjYzciLCJjYWxsYmFja0JvZHkiOiJrZXk9JChrZXkpXHUwMDI2ZXRhZz0kKGV0YWcpXHUwMDI2ZnNpemU9JChmc2l6ZSlcdTAwMjZmbmFtZT0kKGZuYW1lKVx1MDAyNm9yaWdpbj0kKHg6b3JpZ2luKVx1MDAyNmlzX2NvbnZlcnRlZD0kKHg6aXNfY29udmVydGVkKSIsImRlYWRsaW5lIjoxNTYyOTEyNDE4LCJ1cGhvc3RzIjpbImh0dHA6Ly91cC5xaW5pdS5jb20iLCJodHRwOi8vdXBsb2FkLnFpbml1LmNvbSIsIi1IIHVwLnFpbml1LmNvbSBodHRwOi8vMTgzLjEzMS43LjMiXSwiZ2xvYmFsIjpmYWxzZX0=",
-            "upload_url": "https://upload.qbox.me",
-            "custom_headers": {},
-            "custom_callback_data": {
-                "original_key": "d55d9e74b0ec468fe3fba076228a2e257b3becc7"
-            }
-        },
-        "binary": {
-            "key": "a8d2c3919b494cc6e740fb2ceb2cffd61b6105d8",
-            "token": "LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:Sq3Nbu79t1B3bmlSsmB5_mksLc0=:eyJzY29wZSI6InByby1hcHA6YThkMmMzOTE5YjQ5NGNjNmU3NDBmYjJjZWIyY2ZmZDYxYjYxMDVkOCIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWIxNjUyODljYTg3YTg1MzU1MDdmZmY0XHUwMDI2dGltZXN0YW1wPTE1NjI5MTE4MThcdTAwMjZzaWduPTcxYWI2XHUwMDI2dXNlcl9pZD01N2E0MGEzNDk1OWQ2OTJlNzQwMDAwZWMiLCJjYWxsYmFja0JvZHkiOiJrZXk9JChrZXkpXHUwMDI2ZXRhZz0kKGV0YWcpXHUwMDI2ZnNpemU9JChmc2l6ZSlcdTAwMjZmbmFtZT0kKGZuYW1lKVx1MDAyNm9yaWdpbj0kKHg6b3JpZ2luKVx1MDAyNm5hbWU9JCh4Om5hbWUpXHUwMDI2YnVpbGQ9JCh4OmJ1aWxkKVx1MDAyNnZlcnNpb249JCh4OnZlcnNpb24pXHUwMDI2aXNfdXNlX21xYz0kKHg6aXNfdXNlX21xYylcdTAwMjZjaGFuZ2Vsb2c9JCh4OmNoYW5nZWxvZylcdTAwMjZyZWxlYXNlX3R5cGU9JCh4OnJlbGVhc2VfdHlwZSlcdTAwMjZkaXN0cmlidXRpb25fbmFtZT0kKHg6ZGlzdHJpYnV0aW9uX25hbWUpXHUwMDI2c3VwcG9ydGVkX3BsYXRmb3JtPSQoeDpzdXBwb3J0ZWRfcGxhdGZvcm0pXHUwMDI2bWluaW11bV9vc192ZXJzaW9uPSQoeDptaW5pbXVtX29zX3ZlcnNpb24pXHUwMDI2dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcz0kKHg6dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcylcdTAwMjZ1aV9kZXZpY2VfZmFtaWx5PSQoeDp1aV9kZXZpY2VfZmFtaWx5KSIsImRlYWRsaW5lIjoxNTYyOTE1NDE4LCJ1cGhvc3RzIjpbImh0dHA6Ly91cC5xaW5pdS5jb20iLCJodHRwOi8vdXBsb2FkLnFpbml1LmNvbSIsIi1IIHVwLnFpbml1LmNvbSBodHRwOi8vMTgzLjEzMS43LjMiXSwiZ2xvYmFsIjpmYWxzZX0=",
-            "upload_url": "https://upload.qbox.me",
-            "custom_headers": {}
-        },
-        "mqc": {
-            "total": 5,
-            "used": 0,
-            "is_mqc_availabled": true
-        },
-        "support": "qiniu",
-        "prefix": "x:"
-    }
-}
+cordova plugin rm pluginID
+cordova platform rm android
+cordova platform add android@5.1.1
+# 新增文件插件使用@~版本时安装了更高的版本，其依赖android-support-v4:+自动安装的版本过高，会出现aapt的错误。有两种解决办法：
+# 1. 指定固定版本，@~去掉~；2. 指定android-support-v4:26.1.0；3.升级android platform版本；
 ```
 
-upload icon request sample
-```bash
-curl -F "key=dea7fc5be1b3dc0f3746315a2784d64a34b86188" \
-    -F "token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:MEkCP_ccNqLoZFr72PewZ1USCKA=:eyJzY29wZSI6ImZpcmljb246ZGVhN2ZjNWJlMWIzZGMwZjM3NDYzMTVhMjc4NGQ2NGEzNGI4NjE4OCIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWQyNmNmNjQyMzM4OWY0MDFjZGI5MzJjXHUwMDI2dGltZXN0YW1wPTE1NjI4MjgwODFcdTAwMjZzaWduPWM2ZDE1XHUwMDI2b3JpZ2luYWxfa2V5PSIsImNhbGxiYWNrQm9keSI6ImtleT0kKGtleSlcdTAwMjZldGFnPSQoZXRhZylcdTAwMjZmc2l6ZT0kKGZzaXplKVx1MDAyNmZuYW1lPSQoZm5hbWUpXHUwMDI2b3JpZ2luPSQoeDpvcmlnaW4pXHUwMDI2aXNfY29udmVydGVkPSQoeDppc19jb252ZXJ0ZWQpIiwiZGVhZGxpbmUiOjE1NjI4Mjg2ODEsInVwaG9zdHMiOlsiaHR0cDovL3VwLnFpbml1LmNvbSIsImh0dHA6Ly91cGxvYWQucWluaXUuY29tIiwiLUggdXAucWluaXUuY29tIGh0dHA6Ly8xODMuMTMxLjcuMyJdLCJnbG9iYWwiOmZhbHNlfQ=="     \
-    -F "file=@resources/icon.png" \
-    https://upload.qbox.me
-```
-response sample
-```json
-{
-    "download_url": "https://oivkbuqoc.qnssl.com/dea7fc5be1b3dc0f3746315a2784d64a34b86188?attname=icon.png&e=1562831770&token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:gL29zPFIxYSH7XjHbkPHtYd5dDQ=",
-    "is_completed": true
-}
-```
+## cordova app cors跨域问题
+以下所有方法均有安全风险，请酌情评估使用！！！
 
-upload banary request sample
-```bash
-curl -F "key=9e9fac976e97db92983df8b2dc7b594d784366d6" \
-       -F "token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:iMsZO-qE2VpvPvF9F37yamENnu8=:eyJzY29wZSI6InByby1hcHA6OWU5ZmFjOTc2ZTk3ZGI5Mjk4M2RmOGIyZGM3YjU5NGQ3ODQzNjZkNiIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWQyNmNmNjQyMzM4OWY0MDFjZGI5MzJjXHUwMDI2dGltZXN0YW1wPTE1NjI4MjgwODFcdTAwMjZzaWduPWM2ZDE1XHUwMDI2dXNlcl9pZD01N2E0MGEzNDk1OWQ2OTJlNzQwMDAwZWMiLCJjYWxsYmFja0JvZHkiOiJrZXk9JChrZXkpXHUwMDI2ZXRhZz0kKGV0YWcpXHUwMDI2ZnNpemU9JChmc2l6ZSlcdTAwMjZmbmFtZT0kKGZuYW1lKVx1MDAyNm9yaWdpbj0kKHg6b3JpZ2luKVx1MDAyNm5hbWU9JCh4Om5hbWUpXHUwMDI2YnVpbGQ9JCh4OmJ1aWxkKVx1MDAyNnZlcnNpb249JCh4OnZlcnNpb24pXHUwMDI2aXNfdXNlX21xYz0kKHg6aXNfdXNlX21xYylcdTAwMjZjaGFuZ2Vsb2c9JCh4OmNoYW5nZWxvZylcdTAwMjZyZWxlYXNlX3R5cGU9JCh4OnJlbGVhc2VfdHlwZSlcdTAwMjZkaXN0cmlidXRpb25fbmFtZT0kKHg6ZGlzdHJpYnV0aW9uX25hbWUpXHUwMDI2c3VwcG9ydGVkX3BsYXRmb3JtPSQoeDpzdXBwb3J0ZWRfcGxhdGZvcm0pXHUwMDI2bWluaW11bV9vc192ZXJzaW9uPSQoeDptaW5pbXVtX29zX3ZlcnNpb24pXHUwMDI2dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcz0kKHg6dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcylcdTAwMjZ1aV9kZXZpY2VfZmFtaWx5PSQoeDp1aV9kZXZpY2VfZmFtaWx5KSIsImRlYWRsaW5lIjoxNTYyODMxNjgxLCJ1cGhvc3RzIjpbImh0dHA6Ly91cC5xaW5pdS5jb20iLCJodHRwOi8vdXBsb2FkLnFpbml1LmNvbSIsIi1IIHVwLnFpbml1LmNvbSBodHRwOi8vMTgzLjEzMS43LjMiXSwiZ2xvYmFsIjpmYWxzZX0=" \
-       -F "file=@platforms/ios/build/device/cnc.ipa" \
-       -F "x:name=智慧工厂CNC数据中心" \
-       -F "x:version=0.1.2" \
-       -F "x:build=0.1.2" \
-       -F "x:release_type=inhouse" \
-       -F "x:changelog=update something" \
-       https://upload.qbox.me
-```
-response sample
-```json
-{
-    "download_url": "https://pro-app-qn.fir.im/9e9fac976e97db92983df8b2dc7b594d784366d6?attname=cnc.ipa&e=1562831931&token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:MhP66CNT5Qyy8vfvlxv54q1ZNkk=",
-    "is_completed": true,
-    "release_id": "5d26de2b23389f401cdb95d3"
-}
-```
-upload icon test sample
-```bash
-
-platform=android \
-CORP="com.byd" \
-TOKEN="0df4b94d3492c6d71836f91b49c918a1" \
-app=cnc
-
-response=`curl -X "POST" "http://api.fir.im/apps" \
-     -H "Content-Type: application/json" \
-     -d "{\"type\":\"$platform\", \"bundle_id\":\"$CORP.$app\", \"api_token\":\"$TOKEN\"}"`
-
-key=`node -pe "JSON.stringify(JSON.parse(process.argv[1]).cert.icon.key)" "$response"`
-token=`node -pe "JSON.stringify(JSON.parse(process.argv[1]).cert.icon.token)" "$response"`
-url=`node -pe "JSON.stringify(JSON.parse(process.argv[1]).cert.icon.upload_url)" "$response"`
-key=${key:1:`expr ${#key} - 2`}
-token=${token:1:`expr ${#token} - 2`}
-url=${url:1:`expr ${#url} - 2`}
-
-echo `curl -F "key=$key" \
-        -F "token=$token"  \
-        -F "file=@resources/icon.png" \
-        $url`
-```
+1. 服务端接口`response headers`添加`Access-Control-Allow-Origin:*`可支持非cookie类接口的所有终端跨域，对于携带cookie的请求必须指定`Access-Control-Allow-Origin:domain`一个特定域名（不支持指定多个）才能支持跨域。但是仍可在服务端判断请求的域名并在返回中请求域名实现支持多域名跨域.
+2. Android端可通过白名单插件`cordova plugin add cordova-plugin-whitelist`支持在`config.xml`中配置跨域.
+3. `ionic serve`可通过项目内配置文件`ionic.config.json`的`proxies`字段实现指定单个域名跨域.
+4. `vue`项目可通过项目内配置文件`vue.config.js`的`devServer.proxy`字段值实现指定单个域名跨域.
+5. Ios端只能通过方式一（服务端添加cors）实现跨域支持.
+6. 可通过服务端代理脚本支持指定地址自动添加cors支持，参见`proxy.js`代码.
+7. chrome浏览器的`Allow-Control-Allow-Origin: *`插件再新版浏览器中已失效.但chrome仍可通过快捷方式的目标中添加` --args --disable-web-security --user-data-dir`的方法实现非安全模式下获取跨域数据用于开发，chrome需要重启后生效

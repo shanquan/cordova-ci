@@ -1,5 +1,13 @@
 {
-    "name": "mes",
-    "app_id": "",
-    "type": "ionic1"
+  "name": "demo",
+  "integrations": {},
+  "type": "ionic1",
+  "watchPatterns": [],
+  "proxies": [
+    {
+      "path": "/",
+      "proxyUrl": "http://10.6.78.214/"
+    }
+  ],
+  "app_id": "demo"
 }

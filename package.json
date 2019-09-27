@@ -1,49 +1,29 @@
 {
-    "name": "mes",
-    "version": "0.0.1",
-    "description": "mes: An Ionic project",
-    "dependencies": {
-        "cordova-android": "^7.0.0",
-        "cordova-plugin-app-version": "~0.1.9",
-        "cordova-plugin-console": "~1.0.5",
-        "cordova-plugin-device": "~1.1.4",
-        "cordova-plugin-ionic-webview": "^1.2.1",
-        "cordova-plugin-splashscreen": "^5.0.2",
-        "cordova-plugin-statusbar": "~2.2.1",
-        "ionic-plugin-keyboard": "~2.2.1"
-    },
-    "devDependencies": {
-        "gulp-util": "^2.2.14",
-        "shelljs": "^0.3.0"
-    },
-    "cordovaPlugins": [
-        "cordova-plugin-console",
-        "cordova-plugin-device",
-        "cordova-plugin-splashscreen",
-        "cordova-plugin-statusbar",
-        "ionic-plugin-keyboard",
-        "cordova-plugin-whitelist"
+  "name": "demo",
+  "version": "0.0.1",
+  "description": "An Ionic V1 project with platform android v5.1.1",
+  "devDependencies": {
+    "@ionic/cli-plugin-ionic1": "2.1.1",
+    "ionic": "3.7.0"
+  },
+  "cordovaPlatforms": [
+    "android"
+  ],
+  "dependencies": {
+    "cordova-android": "^5.1.1",
+    "cordova-plugin-compat": "^1.2.0",
+    "cordova-plugin-file": "^4.2.0",
+    "cordova-plugin-file-opener2": "^2.0.2",
+    "cordova-plugin-file-transfer": "^1.5.1"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
     ],
-    "cordovaPlatforms": [
-        "ios",
-        {
-            "platform": "ios",
-            "version": "",
-            "locator": "ios"
-        }
-    ],
-    "cordova": {
-        "plugins": {
-            "cordova-plugin-splashscreen": {},
-            "cordova-plugin-ionic-webview": {},
-            "cordova-plugin-app-version": {},
-            "ionic-plugin-keyboard": {},
-            "cordova-plugin-console": {},
-            "cordova-plugin-statusbar": {},
-            "cordova-plugin-device": {}
-        },
-        "platforms": [
-            "android"
-        ]
+    "plugins": {
+      "cordova-plugin-file": {},
+      "cordova-plugin-file-opener2": {},
+      "cordova-plugin-file-transfer": {}
     }
+  }
 }
