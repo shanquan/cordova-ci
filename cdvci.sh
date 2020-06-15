@@ -186,7 +186,7 @@ upload(){
         -F "x:version=$version" \
         -F "x:build=$build" \
         -F "x:release_type=inhouse" \
-        -F "x:changelog=update something" \
+        -F "x:changelog=$message" \
         $url`
     fi
 }

@@ -1,5 +1,6 @@
 {
-    "name": "mes",
-    "app_id": "",
-    "type": "ionic1"
+  "name": "mes",
+  "app_id": "",
+  "type": "ionic1",
+  "defaultBrowser": "chrome"
 }

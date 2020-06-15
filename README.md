@@ -77,6 +77,7 @@ export http_proxy=http://10.9.26.13:8080 && \
 export https_proxy=http://10.9.26.13:8080 && \
 export no_proxy=10.0.0.0/24,loalhost,127.0.0.1,*.byd.com,*.byd.com.cn
 ./cdvci.sh mes upload -p android -v 1.2.9 -n 智慧工厂数据中心 -m "update something"
+./cdvci.sh mes upload -p ios -v 2.0.1 -n 智慧工厂数据中心 -m "1.更新产能达成状况报表 2.修复工厂传null问题"
 #仅上传应用图标
 ./cdvci.sh mes uploadIcon -p ios
 ```
