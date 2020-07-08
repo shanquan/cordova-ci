@@ -93,12 +93,12 @@ get upload tokens request sample
 ```bash
 curl -X "POST" "http://api.fir.im/apps" \
      -H "Content-Type: application/json" \
-     -d "{\"type\":\"ios\", \"bundle_id\":\"com.byd.cnc\", \"api_token\":\"0df4b94d3492c6d71836f91b49c918a1\"}"
+     -d "{\"type\":\"ios\", \"bundle_id\":\"com.byd.cnc\", \"api_token\":\"0df4b94d3492xxx\"}"
 ```
 response sample
 ```json
 {
-    "id": "5b165289ca87a8535507fff4",
+    "id": "5b165289ca8xxx",
     "type": "ios",
     "short": "fyqa",
     "app_user_id": "57a40a34959d692e740000ec",
@@ -106,7 +106,7 @@ response sample
     "form_method": "POST",
     "cert": {
         "icon": {
-            "key": "6ea4b130767d97e8c2827241e0a22a2532886ccf",
+            "key": "6ea4b130767d97xxx",
             "token": "LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:X_qz8egXbRWjwJrKzNYuXi6k9JQ=:eyJzY29wZSI6ImZpcmljb246NmVhNGIxMzA3NjdkOTdlOGMyODI3MjQxZTBhMjJhMjUzMjg4NmNjZiIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWIxNjUyODljYTg3YTg1MzU1MDdmZmY0XHUwMDI2dGltZXN0YW1wPTE1NjI5MTE4MThcdTAwMjZzaWduPTcxYWI2XHUwMDI2b3JpZ2luYWxfa2V5PWQ1NWQ5ZTc0YjBlYzQ2OGZlM2ZiYTA3NjIyOGEyZTI1N2IzYmVjYzciLCJjYWxsYmFja0JvZHkiOiJrZXk9JChrZXkpXHUwMDI2ZXRhZz0kKGV0YWcpXHUwMDI2ZnNpemU9JChmc2l6ZSlcdTAwMjZmbmFtZT0kKGZuYW1lKVx1MDAyNm9yaWdpbj0kKHg6b3JpZ2luKVx1MDAyNmlzX2NvbnZlcnRlZD0kKHg6aXNfY29udmVydGVkKSIsImRlYWRsaW5lIjoxNTYyOTEyNDE4LCJ1cGhvc3RzIjpbImh0dHA6Ly91cC5xaW5pdS5jb20iLCJodHRwOi8vdXBsb2FkLnFpbml1LmNvbSIsIi1IIHVwLnFpbml1LmNvbSBodHRwOi8vMTgzLjEzMS43LjMiXSwiZ2xvYmFsIjpmYWxzZX0=",
             "upload_url": "https://upload.qbox.me",
             "custom_headers": {},
@@ -115,7 +115,7 @@ response sample
             }
         },
         "binary": {
-            "key": "a8d2c3919b494cc6e740fb2ceb2cffd61b6105d8",
+            "key": "a8d2c3919bxxx",
             "token": "LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:Sq3Nbu79t1B3bmlSsmB5_mksLc0=:eyJzY29wZSI6InByby1hcHA6YThkMmMzOTE5YjQ5NGNjNmU3NDBmYjJjZWIyY2ZmZDYxYjYxMDVkOCIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWIxNjUyODljYTg3YTg1MzU1MDdmZmY0XHUwMDI2dGltZXN0YW1wPTE1NjI5MTE4MThcdTAwMjZzaWduPTcxYWI2XHUwMDI2dXNlcl9pZD01N2E0MGEzNDk1OWQ2OTJlNzQwMDAwZWMiLCJjYWxsYmFja0JvZHkiOiJrZXk9JChrZXkpXHUwMDI2ZXRhZz0kKGV0YWcpXHUwMDI2ZnNpemU9JChmc2l6ZSlcdTAwMjZmbmFtZT0kKGZuYW1lKVx1MDAyNm9yaWdpbj0kKHg6b3JpZ2luKVx1MDAyNm5hbWU9JCh4Om5hbWUpXHUwMDI2YnVpbGQ9JCh4OmJ1aWxkKVx1MDAyNnZlcnNpb249JCh4OnZlcnNpb24pXHUwMDI2aXNfdXNlX21xYz0kKHg6aXNfdXNlX21xYylcdTAwMjZjaGFuZ2Vsb2c9JCh4OmNoYW5nZWxvZylcdTAwMjZyZWxlYXNlX3R5cGU9JCh4OnJlbGVhc2VfdHlwZSlcdTAwMjZkaXN0cmlidXRpb25fbmFtZT0kKHg6ZGlzdHJpYnV0aW9uX25hbWUpXHUwMDI2c3VwcG9ydGVkX3BsYXRmb3JtPSQoeDpzdXBwb3J0ZWRfcGxhdGZvcm0pXHUwMDI2bWluaW11bV9vc192ZXJzaW9uPSQoeDptaW5pbXVtX29zX3ZlcnNpb24pXHUwMDI2dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcz0kKHg6dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcylcdTAwMjZ1aV9kZXZpY2VfZmFtaWx5PSQoeDp1aV9kZXZpY2VfZmFtaWx5KSIsImRlYWRsaW5lIjoxNTYyOTE1NDE4LCJ1cGhvc3RzIjpbImh0dHA6Ly91cC5xaW5pdS5jb20iLCJodHRwOi8vdXBsb2FkLnFpbml1LmNvbSIsIi1IIHVwLnFpbml1LmNvbSBodHRwOi8vMTgzLjEzMS43LjMiXSwiZ2xvYmFsIjpmYWxzZX0=",
             "upload_url": "https://upload.qbox.me",
             "custom_headers": {}
@@ -133,7 +133,7 @@ response sample
 
 upload icon request sample
 ```bash
-curl -F "key=dea7fc5be1b3dc0f3746315a2784d64a34b86188" \
+curl -F "key=dea7fc5be1b3dc0fxxx" \
     -F "token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:MEkCP_ccNqLoZFr72PewZ1USCKA=:eyJzY29wZSI6ImZpcmljb246ZGVhN2ZjNWJlMWIzZGMwZjM3NDYzMTVhMjc4NGQ2NGEzNGI4NjE4OCIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWQyNmNmNjQyMzM4OWY0MDFjZGI5MzJjXHUwMDI2dGltZXN0YW1wPTE1NjI4MjgwODFcdTAwMjZzaWduPWM2ZDE1XHUwMDI2b3JpZ2luYWxfa2V5PSIsImNhbGxiYWNrQm9keSI6ImtleT0kKGtleSlcdTAwMjZldGFnPSQoZXRhZylcdTAwMjZmc2l6ZT0kKGZzaXplKVx1MDAyNmZuYW1lPSQoZm5hbWUpXHUwMDI2b3JpZ2luPSQoeDpvcmlnaW4pXHUwMDI2aXNfY29udmVydGVkPSQoeDppc19jb252ZXJ0ZWQpIiwiZGVhZGxpbmUiOjE1NjI4Mjg2ODEsInVwaG9zdHMiOlsiaHR0cDovL3VwLnFpbml1LmNvbSIsImh0dHA6Ly91cGxvYWQucWluaXUuY29tIiwiLUggdXAucWluaXUuY29tIGh0dHA6Ly8xODMuMTMxLjcuMyJdLCJnbG9iYWwiOmZhbHNlfQ=="     \
     -F "file=@resources/icon.png" \
     https://upload.qbox.me
@@ -141,14 +141,14 @@ curl -F "key=dea7fc5be1b3dc0f3746315a2784d64a34b86188" \
 response sample
 ```json
 {
-    "download_url": "https://oivkbuqoc.qnssl.com/dea7fc5be1b3dc0f3746315a2784d64a34b86188?attname=icon.png&e=1562831770&token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:gL29zPFIxYSH7XjHbkPHtYd5dDQ=",
+    "download_url": "https://oivkbuqoc.qnssl.com/dea7fc5be1b3dcxxx?attname=icon.png&e=1562831770&token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:gL29zPFIxYSH7XjHbkPHtYd5dDQ=",
     "is_completed": true
 }
 ```
 
 upload banary request sample
 ```bash
-curl -F "key=9e9fac976e97db92983df8b2dc7b594d784366d6" \
+curl -F "key=9e9fac976e97db92983df8bxxx" \
        -F "token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:iMsZO-qE2VpvPvF9F37yamENnu8=:eyJzY29wZSI6InByby1hcHA6OWU5ZmFjOTc2ZTk3ZGI5Mjk4M2RmOGIyZGM3YjU5NGQ3ODQzNjZkNiIsImNhbGxiYWNrVXJsIjoiaHR0cDovL2FwaS5maXIuaW0vYXV0aC9xaW5pdS9jYWxsYmFjaz9wYXJlbnRfaWQ9NWQyNmNmNjQyMzM4OWY0MDFjZGI5MzJjXHUwMDI2dGltZXN0YW1wPTE1NjI4MjgwODFcdTAwMjZzaWduPWM2ZDE1XHUwMDI2dXNlcl9pZD01N2E0MGEzNDk1OWQ2OTJlNzQwMDAwZWMiLCJjYWxsYmFja0JvZHkiOiJrZXk9JChrZXkpXHUwMDI2ZXRhZz0kKGV0YWcpXHUwMDI2ZnNpemU9JChmc2l6ZSlcdTAwMjZmbmFtZT0kKGZuYW1lKVx1MDAyNm9yaWdpbj0kKHg6b3JpZ2luKVx1MDAyNm5hbWU9JCh4Om5hbWUpXHUwMDI2YnVpbGQ9JCh4OmJ1aWxkKVx1MDAyNnZlcnNpb249JCh4OnZlcnNpb24pXHUwMDI2aXNfdXNlX21xYz0kKHg6aXNfdXNlX21xYylcdTAwMjZjaGFuZ2Vsb2c9JCh4OmNoYW5nZWxvZylcdTAwMjZyZWxlYXNlX3R5cGU9JCh4OnJlbGVhc2VfdHlwZSlcdTAwMjZkaXN0cmlidXRpb25fbmFtZT0kKHg6ZGlzdHJpYnV0aW9uX25hbWUpXHUwMDI2c3VwcG9ydGVkX3BsYXRmb3JtPSQoeDpzdXBwb3J0ZWRfcGxhdGZvcm0pXHUwMDI2bWluaW11bV9vc192ZXJzaW9uPSQoeDptaW5pbXVtX29zX3ZlcnNpb24pXHUwMDI2dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcz0kKHg6dWlfcmVxdWlyZWRfZGV2aWNlX2NhcGFiaWxpdGllcylcdTAwMjZ1aV9kZXZpY2VfZmFtaWx5PSQoeDp1aV9kZXZpY2VfZmFtaWx5KSIsImRlYWRsaW5lIjoxNTYyODMxNjgxLCJ1cGhvc3RzIjpbImh0dHA6Ly91cC5xaW5pdS5jb20iLCJodHRwOi8vdXBsb2FkLnFpbml1LmNvbSIsIi1IIHVwLnFpbml1LmNvbSBodHRwOi8vMTgzLjEzMS43LjMiXSwiZ2xvYmFsIjpmYWxzZX0=" \
        -F "file=@platforms/ios/build/device/cnc.ipa" \
        -F "x:name=智慧工厂CNC数据中心" \
@@ -161,7 +161,7 @@ curl -F "key=9e9fac976e97db92983df8b2dc7b594d784366d6" \
 response sample
 ```json
 {
-    "download_url": "https://pro-app-qn.fir.im/9e9fac976e97db92983df8b2dc7b594d784366d6?attname=cnc.ipa&e=1562831931&token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:MhP66CNT5Qyy8vfvlxv54q1ZNkk=",
+    "download_url": "https://pro-app-qn.fir.im/9e9fac976e97db92xxx?attname=cnc.ipa&e=1562831931&token=LOvmia8oXF4xnLh0IdH05XMYpH6ENHNpARlmPc-T:MhP66CNT5Qyy8vfvlxv54q1ZNkk=",
     "is_completed": true,
     "release_id": "5d26de2b23389f401cdb95d3"
 }
@@ -171,7 +171,7 @@ upload icon test sample
 
 platform=android \
 CORP="com.byd" \
-TOKEN="0df4b94d3492c6d71836f91b49c918a1" \
+TOKEN="0df4b94d3492cxxx" \
 app=cnc
 
 response=`curl -X "POST" "http://api.fir.im/apps" \
