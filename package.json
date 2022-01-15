@@ -14,7 +14,7 @@
     },
     "devDependencies": {
         "gulp-util": "^2.2.14",
-        "shelljs": "^0.3.0"
+        "shelljs": "^0.8.5"
     },
     "cordovaPlatforms": [
         "ios",
